@@ -17,7 +17,9 @@
 #### 首次安装 ####
 请将结尾的password更换为自己的密码，例如 bash easytrojan.sh 123456，安装成功后会返回trojan的连接参数
 ```
-curl https://raw.githubusercontent.com/cxjava/easytrojan/main/easytrojan.sh -o easytrojan.sh && chmod +x easytrojan.sh && bash easytrojan.sh password
+password=$(openssl rand -hex 18)
+echo $password
+curl https://raw.githubusercontent.com/cxjava/easytrojan/main/easytrojan.sh -o easytrojan.sh && chmod +x easytrojan.sh && bash easytrojan.sh $password
 ```
 
 #### 放行端口 ####
