@@ -33,18 +33,30 @@ fi
 
 case $(uname -m) in
     x86_64)
-        caddy_url=https://raw.githubusercontent.com/maplecool/easytrojan/caddy/caddy_trojan_linux_amd64.tar.gz
+        curl -L https://go.dev/dl/go1.20.2.linux-amd64.tar.gz | tar -zx -C /usr/local
+        echo 'export PATH=$PATH:/usr/local/go/bin' > /etc/profile.d/golang.sh
+        source /etc/profile.d/golang.sh
+        go version
+        go install github.com/caddyserver/xcaddy/cmd/xcaddy@latest
+        GOOS=linux GOARCH=amd64 xcaddy build --with github.com/imgk/caddy-trojan
+        caddy version
+        cp caddy /usr/local/bin
         ;;
     aarch64)
-        caddy_url=https://raw.githubusercontent.com/maplecool/easytrojan/caddy/caddy_trojan_linux_arm64.tar.gz
+        curl -L https://go.dev/dl/go1.20.2.linux-arm64.tar.gz | tar -zx -C /usr/local
+        echo 'export PATH=$PATH:/usr/local/go/bin' > /etc/profile.d/golang.sh
+        source /etc/profile.d/golang.sh
+        go version
+        go install github.com/caddyserver/xcaddy/cmd/xcaddy@latest
+        GOOS=linux GOARCH=arm64 xcaddy build --with github.com/imgk/caddy-trojan
+        caddy version
+        cp caddy /usr/local/bin
         ;;
     *) 
         echo "Error: Your system version does not support"
         exit 1
         ;;
 esac
-
-curl -L $caddy_url | tar -zx -C /usr/local/bin caddy
 
 if ! id caddy &>/dev/null; then groupadd --system caddy; useradd --system -g caddy -s "$(command -v nologin)" caddy; fi
 
