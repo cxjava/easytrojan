@@ -33,30 +33,32 @@ fi
 
 case $(uname -m) in
     x86_64)
-        curl -L https://go.dev/dl/go1.20.2.linux-amd64.tar.gz | tar -zx -C /usr/local
-        echo 'export PATH=$PATH:/usr/local/go/bin' > /etc/profile.d/golang.sh
-        source /etc/profile.d/golang.sh
-        go version
-        go install github.com/caddyserver/xcaddy/cmd/xcaddy@latest
-        GOOS=linux GOARCH=amd64 xcaddy build --with github.com/imgk/caddy-trojan
-        caddy version
-        cp caddy /usr/local/bin
+        go_url=https://go.dev/dl/go1.20.2.linux-amd64.tar.gz
         ;;
     aarch64)
-        curl -L https://go.dev/dl/go1.20.2.linux-arm64.tar.gz | tar -zx -C /usr/local
-        echo 'export PATH=$PATH:/usr/local/go/bin' > /etc/profile.d/golang.sh
-        source /etc/profile.d/golang.sh
-        go version
-        go install github.com/caddyserver/xcaddy/cmd/xcaddy@latest
-        GOOS=linux GOARCH=arm64 xcaddy build --with github.com/imgk/caddy-trojan
-        caddy version
-        cp caddy /usr/local/bin
+        go_url=https://go.dev/dl/go1.20.2.linux-arm64.tar.gz
         ;;
     *) 
         echo "Error: Your system version does not support"
         exit 1
         ;;
 esac
+
+CADDY_FILE=/usr/local/bin/caddy
+if [ -f "$CADDY_FILE" ]; then
+    echo "$CADDY_FILE exists."
+    /usr/local/bin/caddy version
+else 
+    echo "$CADDY_FILE does not exist."
+    curl -L $go_url | tar -zx -C /usr/local
+    echo 'export PATH=$PATH:/usr/local/go/bin' > /etc/profile.d/golang.sh
+    source /etc/profile.d/golang.sh
+    go version
+    GOBIN=/usr/local/go/bin go install github.com/caddyserver/xcaddy/cmd/xcaddy@latest
+    GOOS=linux GOARCH=arm64 xcaddy build --with github.com/imgk/caddy-trojan
+    cp caddy /usr/local/bin
+    caddy version
+fi
 
 if ! id caddy &>/dev/null; then groupadd --system caddy; useradd --system -g caddy -s "$(command -v nologin)" caddy; fi
 
