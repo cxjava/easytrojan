@@ -3,7 +3,7 @@
 # Notes: EasyTrojan for CentOS/RedHat 7+ Debian 9+ and Ubuntu 16+
 #
 # Project home page:
-#        https://github.com/maplecool/easytrojan
+#        https://github.com/cxjava/easytrojan
 
 trojan_passwd=$1
 caddy_domain=$2
